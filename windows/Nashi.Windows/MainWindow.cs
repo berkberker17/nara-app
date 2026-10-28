@@ -54,16 +54,17 @@ public sealed partial class MainWindow:Window
         var sideNav=new StackPanel();DockPanel.SetDock(sideNav,Dock.Top);side.Children.Add(sideNav);
         var header=new DockPanel{Margin=new(28,18,28,18)};DockPanel.SetDock(header,Dock.Top);root.Children.Add(header);
         var controls=new WrapPanel{HorizontalAlignment=HorizontalAlignment.Right,VerticalAlignment=VerticalAlignment.Center};DockPanel.SetDock(controls,Dock.Right);header.Children.Add(controls);
-        homeButton=Button("Ana Sayfa",()=>ShowLibrary(false));libraryButton=Button("Görüntüle",()=>ShowLibrary(true));
+        homeButton=Button("\\uE80F   Ana Sayfa",()=>ShowLibrary(false));homeButton.FontFamily=new FontFamily("Segoe MDL2 Assets");libraryButton=Button("Görüntüle",()=>ShowLibrary(true));
         homeButton.Margin=new(0,3,0,3);libraryButton.Margin=new(0,3,0,3);homeButton.HorizontalAlignment=HorizontalAlignment.Stretch;libraryButton.HorizontalAlignment=HorizontalAlignment.Stretch;homeButton.HorizontalContentAlignment=HorizontalAlignment.Left;libraryButton.HorizontalContentAlignment=HorizontalAlignment.Left;
         homeButton.Width=150;libraryButton.Width=150;
         homeButton.Padding=new(14,11,10,11);libraryButton.Padding=new(14,11,10,11);
         sideNav.Children.Add(homeButton);
-        var convertNav=Button("↻   Dönüştür",Choose);var downloadNav=Button("↓   İndir",OpenDownload);var viewNav=Button("▱   Görüntüle",()=>ShowLibrary(true));var toolsNav=Button("⌘   Araçlar",ShowShortcuts);
+        Button Nav(string glyph,string label,Action action){var b=Button(glyph+"   "+label,action);b.FontFamily=new FontFamily("Segoe MDL2 Assets");return b;}
+        var convertNav=Nav("\\uE72C","Dönüştür",Choose);var downloadNav=Nav("\\uE896","İndir",OpenDownload);var viewNav=Nav("\\uE8B7","Görüntüle",()=>ShowLibrary(true));var toolsNav=Nav("\\uE80A","Araçlar",ShowWheel);
         foreach(var nav in new[]{convertNav,downloadNav,viewNav,toolsNav}){nav.Width=150;nav.HorizontalAlignment=HorizontalAlignment.Stretch;nav.HorizontalContentAlignment=HorizontalAlignment.Left;nav.Padding=new(14,11,10,11);nav.Margin=new(0,3,0,3);}
         sideNav.Children.Add(convertNav);sideNav.Children.Add(downloadNav);sideNav.Children.Add(viewNav);sideNav.Children.Add(toolsNav);
         var sideBottom=new StackPanel();DockPanel.SetDock(sideBottom,Dock.Bottom);side.Children.Add(sideBottom);
-        var settingsNav=Button("⚙   Ayarlar",ShowSettings);var aboutNav=Button("ⓘ   Hakkında",ShowShortcuts);
+        var settingsNav=Nav("\\uE713","Ayarlar",ShowSettings);var aboutNav=Nav("\\uE946","Hakkında",ShowShortcuts);
         foreach(var nav in new[]{settingsNav,aboutNav}){nav.Width=150;nav.HorizontalAlignment=HorizontalAlignment.Stretch;nav.HorizontalContentAlignment=HorizontalAlignment.Left;nav.Padding=new(14,11,10,11);nav.Margin=new(0,3,0,3);}
         sideBottom.Children.Add(settingsNav);sideBottom.Children.Add(aboutNav);
         toolsSetupButton=Button(tools.Ready&&officeRuntime.Executable is not null?"Kurulum tamam":"İlk kurulumu tamamla",ShowToolSetupMenu);controls.Children.Add(toolsSetupButton);
@@ -75,6 +76,8 @@ public sealed partial class MainWindow:Window
         var updateRow=new DockPanel();DockPanel.SetDock(updateButton,Dock.Right);updateRow.Children.Add(updateButton);var updateCaption=new StackPanel();updateCaption.Children.Add(Text("Nara her zaman güncel.",16));updateCaption.Children.Add(Text("İndirme ve kurulum zamanını siz seçin.",12,"Muted"));updateRow.Children.Add(updateCaption);updateBanner=Card(updateRow);updateBanner.Visibility=Visibility.Collapsed;home.Children.Add(updateBanner);
         var headline=Text("Dosyalarınızla daha fazlasını yapın",30);headline.MaxWidth=540;home.Children.Add(headline);var intro=Text("Dönüştürün, indirin, görüntüleyin. Hepsi tek bir uygulamada.",15,"Muted");intro.Margin=new(0,6,0,22);home.Children.Add(intro);
         home.Children.Add(workArea);
+        // Keep file-selection controls wired for the existing import workflow,
+        // but keep the landing page faithful to the Nara reference: hero + four action cards.
         var drop=new Grid();drop.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});drop.ColumnDefinitions.Add(new(){Width=new(166)});
         var dropText=new StackPanel();drop.Children.Add(dropText);dropText.Children.Add(selectionPill);selection.Margin=new(0,12,0,8);dropText.Children.Add(selection);dropText.Children.Add(fileDescription);
         var picks=new WrapPanel{Margin=new(0,14,0,8)};chooseFilesButton=Primary("Dosya seç",Choose);picks.Children.Add(chooseFilesButton);openWheelButton=Primary("Araçları aç",ShowWheel);picks.Children.Add(Button("Yapıştır",PasteClipboard));picks.Children.Add(openWheelButton);dropText.Children.Add(picks);
@@ -82,17 +85,28 @@ public sealed partial class MainWindow:Window
         var dropStack=new StackPanel();dropStack.Children.Add(drop);list.ItemsSource=files;list.SelectionMode=SelectionMode.Extended;
         BuildFileChips();var clear=Button("Temizle",()=>{files.Clear();Refresh();});DockPanel.SetDock(clear,Dock.Right);manage.Children.Add(clear);manage.Children.Add(list);dropStack.Children.Add(manage);
         shortcutHints.Orientation=Orientation.Horizontal;shortcutHints.Margin=new(0,12,0,0);dropStack.Children.Add(shortcutHints);
-        var featureGrid=new Grid{Margin=new(0,8,0,0)};featureGrid.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});featureGrid.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});featureGrid.RowDefinitions.Add(new(){Height=GridLength.Auto});featureGrid.RowDefinitions.Add(new(){Height=GridLength.Auto});
-        Border Feature(string symbol,string title,string description,Action action,int col,int row){var body=new StackPanel{Orientation=Orientation.Horizontal};var glyph=Text(symbol,28,"Gold",false);glyph.Width=54;glyph.Height=54;glyph.TextAlignment=TextAlignment.Center;glyph.Margin=new(0,0,14,0);glyph.Background=new SolidColorBrush(Color.FromRgb(237,233,254));body.Children.Add(glyph);var copy=new StackPanel{VerticalAlignment=VerticalAlignment.Center};copy.Children.Add(Text(title,16));copy.Children.Add(Text(description,12,"Muted"));body.Children.Add(copy);var button=Button("",action);button.Content=body;button.HorizontalContentAlignment=HorizontalAlignment.Stretch;button.BorderThickness=new(0);button.Background=Brushes.Transparent;var card=Card(button);card.Margin=new(0,0,10,10);Grid.SetColumn(card,col);Grid.SetRow(card,row);return card;}
-        featureGrid.Children.Add(Feature("▱","Dönüştür","Dosyalarınızı dönüştürün.",Choose,0,0));featureGrid.Children.Add(Feature("↓","İndir","Web'den içerik indirin.",OpenDownload,1,0));featureGrid.Children.Add(Feature("◉","Görüntüle","Dosyalarınızı hızlıca önizleyin.",()=>ShowLibrary(true),0,1));featureGrid.Children.Add(Feature("▦","Araçlar","Ek araçlar ve yardımcı özellikler.",ShowShortcuts,1,1));
+        var featureGrid=new Grid{Margin=new(0,18,0,0)};
+        featureGrid.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});featureGrid.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});
+        featureGrid.RowDefinitions.Add(new(){Height=GridLength.Auto});featureGrid.RowDefinitions.Add(new(){Height=GridLength.Auto});
+        Border Feature(string glyph,string title,string description,Action action,int col,int row)
+        {
+            var body=new StackPanel{Orientation=Orientation.Horizontal,VerticalAlignment=VerticalAlignment.Center};
+            var icon=Text(glyph,23,"Gold",false);icon.FontFamily=new FontFamily("Segoe MDL2 Assets");icon.Width=48;icon.Height=48;icon.TextAlignment=TextAlignment.Center;icon.VerticalAlignment=VerticalAlignment.Center;icon.Margin=new(0,0,14,0);
+            icon.Background=new SolidColorBrush(Color.FromRgb(237,233,254));icon.Foreground=new SolidColorBrush(Color.FromRgb(124,58,237));
+            body.Children.Add(icon);
+            var copy=new StackPanel{VerticalAlignment=VerticalAlignment.Center};
+            copy.Children.Add(Text(title,16));copy.Children.Add(Text(description,12,"Muted"));body.Children.Add(copy);
+            var button=Button("",action);button.Content=body;button.HorizontalContentAlignment=HorizontalAlignment.Stretch;button.VerticalContentAlignment=VerticalAlignment.Center;button.Padding=new(16);button.BorderThickness=new(0);button.Background=Brushes.Transparent;
+            var card=Card(button);card.Padding=new(14);card.MinHeight=94;card.Margin=new Thickness(0,0,col==0?12:0,12);
+            Grid.SetColumn(card,col);Grid.SetRow(card,row);return card;
+        }
+        featureGrid.Children.Add(Feature("\\uE8A5","Dönüştür","Görsel, video, ses, belge formatlarını dönüştürün.",Choose,0,0));
+        featureGrid.Children.Add(Feature("\\uE896","İndir","Web'den içerik indirin. Desteklenen birçok kaynak.",OpenDownload,1,0));
+        featureGrid.Children.Add(Feature("\\uE8A9","Görüntüle","Dosyalarınızı hızlıca önizleyin.",()=>ShowLibrary(true),0,1));
+        featureGrid.Children.Add(Feature("\\uE80A","Araçlar","Ek araçlar ve yardımcı özellikler.",ShowWheel,1,1));
         workArea.Children.Add(featureGrid);
-        actions.Margin=new(0,10,0,0);
-        var web=new StackPanel();web.Children.Add(Text("Bağlantıdan indir",17));web.Children.Add(Text("Video, ses veya görseli doğrudan araçlarınıza indirin.",12,"Muted"));
-        var download=new DockPanel{Margin=new(0,12,0,0)};var save=Primary("İndir ↗",async()=>await DownloadAsync());DockPanel.SetDock(save,Dock.Right);download.Children.Add(save);DockPanel.SetDock(downloadKind,Dock.Right);download.Children.Add(downloadKind);download.Children.Add(link);web.Children.Add(download);
-        web.Children.Add(Text("Ctrl+Shift+D  Kopyalanan bağlantıyı kullan",11,"Muted"));webContent.Margin=new(24);webContent.Children.Add(Text("Web’den indir",27));webContent.Children.Add(Text("Bir bağlantıdan dosyanıza.",14,"Muted"));var webCard=Card(web);webCard.Margin=new(0,20,0,0);webContent.Children.Add(webCard);BuildWebOptions();
-        var webHeader=new DockPanel();var shortcut=Text("Ctrl+Shift+D",12,"Muted");DockPanel.SetDock(shortcut,Dock.Right);webHeader.Children.Add(shortcut);var arrow=Text("↓",28,"Gold");arrow.Margin=new(0,0,14,0);DockPanel.SetDock(arrow,Dock.Left);webHeader.Children.Add(arrow);var caption=new StackPanel();caption.SetValue(TextBlock.TextAlignmentProperty,TextAlignment.Left);caption.Children.Add(Text("Bağlantıdan indir",15));caption.Children.Add(Text("Video, ses veya görseli doğrudan araçlarınıza indirin.",12,"Muted"));webHeader.Children.Add(caption);var webButton=Button("",OpenDownload);webButton.Content=webHeader;webButton.HorizontalContentAlignment=HorizontalAlignment.Stretch;webButton.Margin=new(0);webButton.Padding=new(18);webButton.BorderThickness=new(0);var webLanding=Card(webButton);webLanding.Padding=new(0);workArea.Children.Add(webLanding);workArea.Children.Add(actions);
         var recentHeading=new DockPanel{Margin=new(0,24,0,10)};var all=Button("Tümünü gör  ↗",()=>ShowLibrary(true));DockPanel.SetDock(all,Dock.Right);recentHeading.Children.Add(all);recentSearch.TextChanged+=(_,_)=>RenderLibrary();DockPanel.SetDock(recentSearch,Dock.Right);recentHeading.Children.Add(recentSearch);var recentTitle=new StackPanel{Orientation=Orientation.Horizontal,VerticalAlignment=VerticalAlignment.Center};recentTitle.Children.Add(Text("Son oluşturulanlar",19));recentCount.Margin=new(10,0,0,0);recentTitle.Children.Add(recentCount);recentHeading.Children.Add(recentTitle);home.Children.Add(recentHeading);var recentCard=Card(recentRows);recentCard.Padding=new(7);home.Children.Add(recentCard);
-        var footer=new WrapPanel{Margin=new(0,14,0,0)};footer.Children.Add(Button("Set up media tools",async()=>await SetupAsync()));footer.Children.Add(Button("Set up office tools",async()=>await SetupOfficeAsync()));footer.Children.Add(Button("Features & shortcuts",ShowShortcuts));footer.Children.Add(dropStack);home.Children.Add(new Expander{Header="Dosya alanı ve araçlar",Content=footer,Margin=new(4,8,4,0)});
+        // Setup and shortcut controls remain available from Settings; the landing page stays uncluttered.
         libraryPage.Children.Add(Text("Kitaplığınız",30));libraryPage.Children.Add(Text("Oluşturduğunuz ve içe aktardığınız dosyalar.",14,"Muted"));
         var searchLabel=Text("Dosya veya araç ara  ·  Ctrl+F",12,"Muted");searchLabel.Margin=new(4,20,4,0);libraryPage.Children.Add(searchLabel);libraryPage.Children.Add(search);libraryPage.Children.Add(libraryRows);search.TextChanged+=(_,_)=>RenderLibrary();
         AutomationProperties.SetAutomationId(search,"LibrarySearch");AutomationProperties.SetAutomationId(link,"DownloadLink");AutomationProperties.SetAutomationId(list,"SelectedFiles");
