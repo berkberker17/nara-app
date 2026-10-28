@@ -2,11 +2,11 @@
 <Application.Resources>
  <local:ChoiceTextConverter x:Key="ChoiceText"/>
  <DataTemplate x:Key="ChoiceLabel"><TextBlock><TextBlock.Text><MultiBinding Converter="{StaticResource ChoiceText}"><Binding/><Binding Path="Language" Source="{x:Static local:LanguageState.Shared}"/></MultiBinding></TextBlock.Text></TextBlock></DataTemplate>
- <SolidColorBrush x:Key="Ink" Color="#F4F1FF"/><SolidColorBrush x:Key="Paper" Color="#111126"/>
- <SolidColorBrush x:Key="Surface" Color="#1D1B35"/><SolidColorBrush x:Key="Inset" Color="#15132A"/>
- <SolidColorBrush x:Key="Muted" Color="#B8B3D4"/><SolidColorBrush x:Key="Line" Color="#393451"/>
- <SolidColorBrush x:Key="Sand" Color="#30234F"/>
- <SolidColorBrush x:Key="Sage" Color="#33245B"/><SolidColorBrush x:Key="Gold" Color="#7C3AED"/>
+ <SolidColorBrush x:Key="Ink" Color="#17172F"/><SolidColorBrush x:Key="Paper" Color="#FFFFFF"/>
+ <SolidColorBrush x:Key="Surface" Color="#FFFFFF"/><SolidColorBrush x:Key="Inset" Color="#F8F6FC"/>
+ <SolidColorBrush x:Key="Muted" Color="#64648A"/><SolidColorBrush x:Key="Line" Color="#E5DFF5"/>
+ <SolidColorBrush x:Key="Sand" Color="#EDE9FE"/>
+ <SolidColorBrush x:Key="Sage" Color="#EDE9FE"/><SolidColorBrush x:Key="Gold" Color="#7C3AED"/>
  <Style TargetType="Window"><Setter Property="Background" Value="{DynamicResource Paper}"/><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="FontFamily" Value="Segoe UI"/><Setter Property="FontSize" Value="14"/></Style>
  <Style TargetType="Button">
   <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
