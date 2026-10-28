@@ -1,4 +1,4 @@
-<p align="center"><img src="Resources/Brand/NaraIcon.png" width="128" alt="Nara"></p>
+<p align="center"><img src="Resources/Brand/NaraIcon.svg" width="128" alt="Nara"></p>
 <h1 align="center">Nara</h1>
 <p align="center">Your files, a little sweeter. · Dosyaların için tatlı bir kolaylık.</p>
 
@@ -45,12 +45,12 @@ For macOS: Apple Silicon, macOS 13+ and Xcode/Swift 6.
 
 ```sh
 scripts/setup-exiftool.sh
-swift build --product Nara
-swift test --filter NaraUpdatesTests
+swift build --product Nashi
+swift test --filter NashiUpdatesTests
 scripts/build-app.sh release
 ```
 
-The public app is written to `build/Nara.app`. Large runtimes are installed through its setup screen. Source builds use an ad-hoc signature unless you provide your own ignored signing profile. Signing private keys are never distributed. [Windows build instructions](windows/README.md).
+The public app is written to `build/Nashi.app`. Large runtimes are installed through its setup screen. Source builds use an ad-hoc signature unless you provide your own ignored signing profile. Signing private keys are never distributed. [Windows build instructions](windows/README.md).
 
 ## Privacy and updates
 
