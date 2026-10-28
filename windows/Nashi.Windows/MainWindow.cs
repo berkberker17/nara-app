@@ -54,18 +54,18 @@ public sealed partial class MainWindow:Window
         var sideNav=new StackPanel();DockPanel.SetDock(sideNav,Dock.Top);side.Children.Add(sideNav);
         var header=new DockPanel{Margin=new(28,18,28,18)};DockPanel.SetDock(header,Dock.Top);root.Children.Add(header);
         var controls=new WrapPanel{HorizontalAlignment=HorizontalAlignment.Right,VerticalAlignment=VerticalAlignment.Center};DockPanel.SetDock(controls,Dock.Right);header.Children.Add(controls);
-        homeButton=Button("\\uE80F   Ana Sayfa",()=>ShowLibrary(false));homeButton.FontFamily=new FontFamily("Segoe MDL2 Assets");libraryButton=Button("Görüntüle",()=>ShowLibrary(true));
+        homeButton=Button("",()=>ShowLibrary(false));homeButton.Content=NavContent("\uE80F","Ana Sayfa");libraryButton=Button("Görüntüle",()=>ShowLibrary(true));
         homeButton.Margin=new(0,3,0,3);libraryButton.Margin=new(0,3,0,3);homeButton.HorizontalAlignment=HorizontalAlignment.Stretch;libraryButton.HorizontalAlignment=HorizontalAlignment.Stretch;homeButton.HorizontalContentAlignment=HorizontalAlignment.Left;libraryButton.HorizontalContentAlignment=HorizontalAlignment.Left;
         homeButton.Width=150;libraryButton.Width=150;
         homeButton.Padding=new(14,11,10,11);libraryButton.Padding=new(14,11,10,11);
         sideNav.Children.Add(homeButton);
         UIElement NavContent(string glyph,string label){var row=new StackPanel{Orientation=Orientation.Horizontal,VerticalAlignment=VerticalAlignment.Center};var icon=Text(glyph,16,"Ink",false);icon.FontFamily=new FontFamily("Segoe MDL2 Assets");icon.Width=20;icon.Margin=new(0,0,12,0);row.Children.Add(icon);row.Children.Add(Text(label,13));return row;}
         Button Nav(string glyph,string label,Action action){var b=Button("",action);b.Content=NavContent(glyph,label);return b;}
-        var convertNav=Nav("\\uE72C","Dönüştür",Choose);var downloadNav=Nav("\\uE896","İndir",OpenDownload);var viewNav=Nav("\\uE8B7","Görüntüle",()=>ShowLibrary(true));var toolsNav=Nav("\\uE80A","Araçlar",ShowWheel);
+        var convertNav=Nav("\uE72C","Dönüştür",Choose);var downloadNav=Nav("\uE896","İndir",OpenDownload);var viewNav=Nav("\uE8B7","Görüntüle",()=>ShowLibrary(true));var toolsNav=Nav("\uE80A","Araçlar",ShowWheel);
         foreach(var nav in new[]{convertNav,downloadNav,viewNav,toolsNav}){nav.Width=150;nav.HorizontalAlignment=HorizontalAlignment.Stretch;nav.HorizontalContentAlignment=HorizontalAlignment.Left;nav.Padding=new(14,11,10,11);nav.Margin=new(0,3,0,3);}
         sideNav.Children.Add(convertNav);sideNav.Children.Add(downloadNav);sideNav.Children.Add(viewNav);sideNav.Children.Add(toolsNav);
         var sideBottom=new StackPanel();DockPanel.SetDock(sideBottom,Dock.Bottom);side.Children.Add(sideBottom);
-        var settingsNav=Nav("\\uE713","Ayarlar",ShowSettings);var aboutNav=Nav("\\uE946","Hakkında",ShowShortcuts);
+        var settingsNav=Nav("\uE713","Ayarlar",ShowSettings);var aboutNav=Nav("\uE946","Hakkında",ShowShortcuts);
         foreach(var nav in new[]{settingsNav,aboutNav}){nav.Width=150;nav.HorizontalAlignment=HorizontalAlignment.Stretch;nav.HorizontalContentAlignment=HorizontalAlignment.Left;nav.Padding=new(14,11,10,11);nav.Margin=new(0,3,0,3);}
         sideBottom.Children.Add(settingsNav);sideBottom.Children.Add(aboutNav);
         toolsSetupButton=Button(tools.Ready&&officeRuntime.Executable is not null?"Kurulum tamam":"İlk kurulumu tamamla",ShowToolSetupMenu);controls.Children.Add(toolsSetupButton);
@@ -101,10 +101,10 @@ public sealed partial class MainWindow:Window
             var card=Card(button);card.Padding=new(14);card.MinHeight=94;card.Margin=new Thickness(0,0,col==0?12:0,12);
             Grid.SetColumn(card,col);Grid.SetRow(card,row);return card;
         }
-        featureGrid.Children.Add(Feature("\\uE8A5","Dönüştür","Görsel, video, ses, belge formatlarını dönüştürün.",Choose,0,0));
-        featureGrid.Children.Add(Feature("\\uE896","İndir","Web'den içerik indirin. Desteklenen birçok kaynak.",OpenDownload,1,0));
-        featureGrid.Children.Add(Feature("\\uE8A9","Görüntüle","Dosyalarınızı hızlıca önizleyin.",()=>ShowLibrary(true),0,1));
-        featureGrid.Children.Add(Feature("\\uE80A","Araçlar","Ek araçlar ve yardımcı özellikler.",ShowWheel,1,1));
+        featureGrid.Children.Add(Feature("\uE8A5","Dönüştür","Görsel, video, ses, belge formatlarını dönüştürün.",Choose,0,0));
+        featureGrid.Children.Add(Feature("\uE896","İndir","Web'den içerik indirin. Desteklenen birçok kaynak.",OpenDownload,1,0));
+        featureGrid.Children.Add(Feature("\uE8A9","Görüntüle","Dosyalarınızı hızlıca önizleyin.",()=>ShowLibrary(true),0,1));
+        featureGrid.Children.Add(Feature("\uE80A","Araçlar","Ek araçlar ve yardımcı özellikler.",ShowWheel,1,1));
         workArea.Children.Add(featureGrid);
         var recentHeading=new DockPanel{Margin=new(0,24,0,10)};var all=Button("Tümünü gör  ↗",()=>ShowLibrary(true));DockPanel.SetDock(all,Dock.Right);recentHeading.Children.Add(all);recentSearch.TextChanged+=(_,_)=>RenderLibrary();DockPanel.SetDock(recentSearch,Dock.Right);recentHeading.Children.Add(recentSearch);var recentTitle=new StackPanel{Orientation=Orientation.Horizontal,VerticalAlignment=VerticalAlignment.Center};recentTitle.Children.Add(Text("Son oluşturulanlar",19));recentCount.Margin=new(10,0,0,0);recentTitle.Children.Add(recentCount);recentHeading.Children.Add(recentTitle);home.Children.Add(recentHeading);var recentCard=Card(recentRows);recentCard.Padding=new(7);home.Children.Add(recentCard);
         // Setup and shortcut controls remain available from Settings; the landing page stays uncluttered.
