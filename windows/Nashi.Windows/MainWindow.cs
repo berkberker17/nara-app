@@ -47,7 +47,7 @@ public sealed partial class MainWindow:Window
         var root=new DockPanel{Margin=new(0)};Content=root;AddHandler(UIElement.PreviewMouseWheelEvent,new MouseWheelEventHandler(RoutePageMouseWheel),true);
         var sidebar=new Border{Width=190,Padding=new(18,22,14,18),BorderThickness=new(0,0,1,0)};
         sidebar.SetResourceReference(Border.BackgroundProperty,"Surface");sidebar.SetResourceReference(Border.BorderBrushProperty,"Line");DockPanel.SetDock(sidebar,Dock.Left);root.Children.Add(sidebar);
-        var side=new DockPanel();sidebar.Child=side;
+        var side=new DockPanel();DockPanel.SetLastChildFill(side,false);sidebar.Child=side;
         var sideBrand=new StackPanel{Orientation=Orientation.Horizontal,Margin=new(0,0,0,26)};
         sideBrand.Children.Add(new Image{Source=NaraArtwork.Mark(),Width=42,Height=42,Margin=new(0,0,8,0)});
         sideBrand.Children.Add(Text("Nara",22));DockPanel.SetDock(sideBrand,Dock.Top);side.Children.Add(sideBrand);
@@ -73,7 +73,7 @@ public sealed partial class MainWindow:Window
         DockPanel.SetDock(status,Dock.Bottom);status.Margin=new(4,14,4,0);root.Children.Add(status);
         var pages=new Grid{Margin=new(28,0,28,18)};homeScroll.Content=home;homeScroll.VerticalScrollBarVisibility=ScrollBarVisibility.Auto;homeScroll.HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled;libraryScroll.Content=libraryPage;libraryScroll.VerticalScrollBarVisibility=ScrollBarVisibility.Auto;libraryScroll.HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled;pages.Children.Add(homeScroll);pages.Children.Add(libraryScroll);root.Children.Add(pages);
         var updateRow=new DockPanel();DockPanel.SetDock(updateButton,Dock.Right);updateRow.Children.Add(updateButton);var updateCaption=new StackPanel();updateCaption.Children.Add(Text("A little fresher. Ready when you are.",16));updateCaption.Children.Add(Text("You choose when to download and install.",12,"Muted"));updateRow.Children.Add(updateCaption);updateBanner=Card(updateRow);updateBanner.Visibility=Visibility.Collapsed;home.Children.Add(updateBanner);
-        home.Children.Add(Text("Dosyalarınızla daha fazlasını yapın",30));var intro=Text("Dönüştürün, indirin, görüntüleyin. Hepsi tek bir uygulamada.",15,"Muted");intro.Margin=new(0,6,0,22);home.Children.Add(intro);
+        var headline=Text("Dosyalarınızla daha fazlasını yapın",30);headline.MaxWidth=540;home.Children.Add(headline);var intro=Text("Dönüştürün, indirin, görüntüleyin. Hepsi tek bir uygulamada.",15,"Muted");intro.Margin=new(0,6,0,22);home.Children.Add(intro);
         home.Children.Add(workArea);
         var drop=new Grid();drop.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});drop.ColumnDefinitions.Add(new(){Width=new(166)});
         var dropText=new StackPanel();drop.Children.Add(dropText);dropText.Children.Add(selectionPill);selection.Margin=new(0,12,0,8);dropText.Children.Add(selection);dropText.Children.Add(fileDescription);
