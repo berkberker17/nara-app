@@ -65,7 +65,7 @@ public sealed partial class MainWindow:Window
         foreach(var nav in new[]{convertNav,downloadNav,viewNav,toolsNav}){nav.Width=150;nav.HorizontalAlignment=HorizontalAlignment.Stretch;nav.HorizontalContentAlignment=HorizontalAlignment.Left;nav.Padding=new(14,11,10,11);nav.Margin=new(0,3,0,3);}
         sideNav.Children.Add(convertNav);sideNav.Children.Add(downloadNav);sideNav.Children.Add(viewNav);sideNav.Children.Add(toolsNav);
         var sideBottom=new StackPanel();DockPanel.SetDock(sideBottom,Dock.Bottom);side.Children.Add(sideBottom);
-        var settingsNav=Nav("\uE713","Ayarlar",ShowSettings);var aboutNav=Nav("\uE946","Hakkında",ShowShortcuts);
+        var settingsNav=Nav("\uE713","Ayarlar",ShowSettings);var aboutNav=Nav("\uE946","Hakkında",()=>MessageBox.Show(this,"Nara · Dosyalarınızı dönüştürün, indirin ve görüntüleyin.","Nara · Hakkında",MessageBoxButton.OK,MessageBoxImage.Information));
         foreach(var nav in new[]{settingsNav,aboutNav}){nav.Width=150;nav.HorizontalAlignment=HorizontalAlignment.Stretch;nav.HorizontalContentAlignment=HorizontalAlignment.Left;nav.Padding=new(14,11,10,11);nav.Margin=new(0,3,0,3);}
         sideBottom.Children.Add(settingsNav);sideBottom.Children.Add(aboutNav);
         toolsSetupButton=Button(tools.Ready&&officeRuntime.Executable is not null?"Kurulum tamam":"İlk kurulumu tamamla",ShowToolSetupMenu);controls.Children.Add(toolsSetupButton);
@@ -75,7 +75,10 @@ public sealed partial class MainWindow:Window
         DockPanel.SetDock(status,Dock.Bottom);status.Margin=new(4,14,4,0);root.Children.Add(status);
         var pages=new Grid{Margin=new(28,0,28,18)};homeScroll.Content=home;homeScroll.VerticalScrollBarVisibility=ScrollBarVisibility.Auto;homeScroll.HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled;libraryScroll.Content=libraryPage;libraryScroll.VerticalScrollBarVisibility=ScrollBarVisibility.Auto;libraryScroll.HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled;pages.Children.Add(homeScroll);pages.Children.Add(libraryScroll);root.Children.Add(pages);
         var updateRow=new DockPanel();DockPanel.SetDock(updateButton,Dock.Right);updateRow.Children.Add(updateButton);var updateCaption=new StackPanel();updateCaption.Children.Add(Text("Nara her zaman güncel.",16));updateCaption.Children.Add(Text("İndirme ve kurulum zamanını siz seçin.",12,"Muted"));updateRow.Children.Add(updateCaption);updateBanner=Card(updateRow);updateBanner.Visibility=Visibility.Collapsed;home.Children.Add(updateBanner);
-        var headline=Text("Dosyalarınızla daha fazlasını yapın",30);headline.MaxWidth=540;home.Children.Add(headline);var intro=Text("Dönüştürün, indirin, görüntüleyin. Hepsi tek bir uygulamada.",15,"Muted");intro.Margin=new(0,6,0,22);home.Children.Add(intro);
+        var headline=new TextBlock{FontSize=30,FontWeight=FontWeights.Bold,TextWrapping=TextWrapping.Wrap,MaxWidth=560,Foreground=Theme.Brush("Ink")};
+        headline.Inlines.Add(new System.Windows.Documents.Run("Dosyalarınızla\\ndaha "));
+        headline.Inlines.Add(new System.Windows.Documents.Run("fazlasını yapın"){Foreground=Theme.Primary});
+        home.Children.Add(headline);var intro=Text("Dönüştürün, indirin, görüntüleyin.\\nHepsi tek bir uygulamada.",15,"Muted");intro.Margin=new(0,6,0,22);home.Children.Add(intro);
         home.Children.Add(workArea);
         // Keep file-selection controls wired for the existing import workflow,
         // but keep the landing page faithful to the Nara reference: hero + four action cards.
