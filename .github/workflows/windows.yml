@@ -26,13 +26,13 @@ jobs:
         run: |
           dotnet restore windows/Nashi.Windows --locked-mode
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          dotnet publish windows/Nashi.Windows -c Release --no-restore -o build/windows/Nashi
+          dotnet publish windows/Nashi.Windows -c Release --no-restore -o build/windows/Nara
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Install verified media tools and exercise real exports
         shell: pwsh
         env:
           NASHI_VERIFY_DOWNLOAD_TOOLS: '1'
-          NASHI_VERIFY_TOOLS_DIRECTORY: '${{ runner.temp }}\Nashi-Test-Tools'
+          NASHI_VERIFY_TOOLS_DIRECTORY: '${{ runner.temp }}\Nara-Test-Tools'
         run: |
           dotnet run --project windows/Nashi.Verify -c Release
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -49,7 +49,7 @@ jobs:
           function Invoke-NativeFixture([string] $directory) {
             $env:NASHI_SMOKE_DIRECTORY = $directory
             New-Item -ItemType Directory -Force $directory | Out-Null
-            $start = [System.Diagnostics.ProcessStartInfo]::new((Resolve-Path build/windows/Nashi/Nashi.exe))
+            $start = [System.Diagnostics.ProcessStartInfo]::new((Resolve-Path build/windows/Nara/Nara.exe))
             $start.UseShellExecute = $false
             $start.ArgumentList.Add('--smoke-test')
             $process = [System.Diagnostics.Process]::Start($start)
@@ -80,7 +80,7 @@ jobs:
             if (!$hasFrames) {
               $env:NASHI_SMOKE_DIRECTORY = Join-Path $proof 'native-debug'
               New-Item -ItemType Directory -Force $env:NASHI_SMOKE_DIRECTORY | Out-Null
-              & build/NativeDebugRunner.exe (Resolve-Path build/windows/Nashi/Nashi.exe) --smoke-test 2>&1 | Tee-Object -FilePath (Join-Path $proof 'native-stack.txt')
+              & build/NativeDebugRunner.exe (Resolve-Path build/windows/Nara/Nara.exe) --smoke-test 2>&1 | Tee-Object -FilePath (Join-Path $proof 'native-stack.txt')
             }
             Start-Sleep -Seconds 3
             Get-WinEvent -FilterHashtable @{LogName='Application'; Id=1000,1001,1026; StartTime=(Get-Date).AddMinutes(-20)} -ErrorAction SilentlyContinue | Select-Object -First 8 TimeCreated,ProviderName,Id,Message | Format-List | Out-String | Write-Host
@@ -93,14 +93,14 @@ jobs:
       - name: Package portable app
         shell: pwsh
         run: |
-          Compress-Archive -Path build/windows/Nashi/* -DestinationPath build/Nashi-Windows-x64.zip
-          Get-FileHash build/Nashi-Windows-x64.zip -Algorithm SHA256
+          Compress-Archive -Path build/windows/Nara/* -DestinationPath build/Nara-Windows-x64.zip
+          Get-FileHash build/Nara-Windows-x64.zip -Algorithm SHA256
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         if: always()
         with:
           name: windows-preview
           path: |
-            build/Nashi-Windows-x64.zip
+            build/Nara-Windows-x64.zip
             build/windows-smoke
           retention-days: 7
           if-no-files-found: error
