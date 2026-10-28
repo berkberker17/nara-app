@@ -61,7 +61,7 @@ public sealed partial class MainWindow:Window
         sideNav.Children.Add(homeButton);
         UIElement NavContent(string glyph,string label){var row=new StackPanel{Orientation=Orientation.Horizontal,VerticalAlignment=VerticalAlignment.Center};var icon=Text(glyph,16,"Ink",false);icon.FontFamily=new FontFamily("Segoe MDL2 Assets");icon.Width=20;icon.Margin=new(0,0,12,0);row.Children.Add(icon);row.Children.Add(Text(label,13));return row;}
         Button Nav(string glyph,string label,Action action){var b=Button("",action);b.Content=NavContent(glyph,label);return b;}
-        var convertNav=Nav("\uE72C","Dönüştür",Choose);var downloadNav=Nav("\uE896","İndir",OpenDownload);var viewNav=Nav("\uE8B7","Görüntüle",()=>ShowLibrary(true));var toolsNav=Nav("\uE80A","Araçlar",ShowWheel);
+        var convertNav=Nav("\uE895","Dönüştür",Choose);var downloadNav=Nav("\uE896","İndir",OpenDownload);var viewNav=Nav("\uE8B7","Görüntüle",()=>ShowLibrary(true));var toolsNav=Nav("\uE80A","Araçlar",ShowWheel);
         foreach(var nav in new[]{convertNav,downloadNav,viewNav,toolsNav}){nav.Width=150;nav.HorizontalAlignment=HorizontalAlignment.Stretch;nav.HorizontalContentAlignment=HorizontalAlignment.Left;nav.Padding=new(14,11,10,11);nav.Margin=new(0,3,0,3);}
         sideNav.Children.Add(convertNav);sideNav.Children.Add(downloadNav);sideNav.Children.Add(viewNav);sideNav.Children.Add(toolsNav);
         var sideBottom=new StackPanel();DockPanel.SetDock(sideBottom,Dock.Bottom);side.Children.Add(sideBottom);
@@ -106,9 +106,26 @@ public sealed partial class MainWindow:Window
         }
         featureGrid.Children.Add(Feature("\uE8A5","Dönüştür","Görsel, video, ses, belge formatlarını dönüştürün.",Choose,0,0));
         featureGrid.Children.Add(Feature("\uE896","İndir","Web'den içerik indirin. Desteklenen birçok kaynak.",OpenDownload,1,0));
-        featureGrid.Children.Add(Feature("\uE8A9","Görüntüle","Dosyalarınızı hızlıca önizleyin.",()=>ShowLibrary(true),0,1));
+        featureGrid.Children.Add(Feature("\uE890","Görüntüle","Dosyalarınızı hızlıca önizleyin.",()=>ShowLibrary(true),0,1));
         featureGrid.Children.Add(Feature("\uE80A","Araçlar","Ek araçlar ve yardımcı özellikler.",ShowWheel,1,1));
         workArea.Children.Add(featureGrid);
+        // Build the download window content independently from the landing-page cards.
+        // The download card opens this fully initialized panel.
+        actions.Margin=new(0,10,0,0);
+        var web=new StackPanel();
+        web.Children.Add(Text("Bağlantıdan indir",17));
+        web.Children.Add(Text("Video, ses veya görsel bağlantısını araçlarınıza aktarın.",12,"Muted"));
+        var download=new DockPanel{Margin=new(0,12,0,0)};
+        var save=Primary("İndir ↗",async()=>await DownloadAsync());
+        DockPanel.SetDock(save,Dock.Right);download.Children.Add(save);
+        DockPanel.SetDock(downloadKind,Dock.Right);download.Children.Add(downloadKind);
+        download.Children.Add(link);web.Children.Add(download);
+        web.Children.Add(Text("Ctrl+Shift+D  Kopyalanan bağlantıyı kullanın",11,"Muted"));
+        webContent.Margin=new(24);
+        webContent.Children.Add(Text("Web’den indir",27));
+        webContent.Children.Add(Text("Bağlantıdan dosyanızı indirin.",14,"Muted"));
+        var webCard=Card(web);webCard.Margin=new(0,20,0,0);webContent.Children.Add(webCard);
+        BuildWebOptions();
         var recentHeading=new DockPanel{Margin=new(0,24,0,10)};var all=Button("Tümünü gör  ↗",()=>ShowLibrary(true));DockPanel.SetDock(all,Dock.Right);recentHeading.Children.Add(all);recentSearch.TextChanged+=(_,_)=>RenderLibrary();DockPanel.SetDock(recentSearch,Dock.Right);recentHeading.Children.Add(recentSearch);var recentTitle=new StackPanel{Orientation=Orientation.Horizontal,VerticalAlignment=VerticalAlignment.Center};recentTitle.Children.Add(Text("Son oluşturulanlar",19));recentCount.Margin=new(10,0,0,0);recentTitle.Children.Add(recentCount);recentHeading.Children.Add(recentTitle);home.Children.Add(recentHeading);var recentCard=Card(recentRows);recentCard.Padding=new(7);home.Children.Add(recentCard);
         // Setup and shortcut controls remain available from Settings; the landing page stays uncluttered.
         libraryPage.Children.Add(Text("Kitaplığınız",30));libraryPage.Children.Add(Text("Oluşturduğunuz ve içe aktardığınız dosyalar.",14,"Muted"));
