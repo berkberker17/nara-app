@@ -28,7 +28,7 @@ internal sealed class TrayHost:IDisposable
     internal void UpdateAvailable(string version){notice.Tip="Nara · Update "+version+" available";if(notice.Tip.Length>127)notice.Tip=notice.Tip[..127];notice.Flags=4;Shell_NotifyIcon(1,notice);}
     public TrayHost(Window window,Action open,Func<ContextMenu> menu)
     {
-        this.open=open;this.menu=menu;var handle=new WindowInteropHelper(window).Handle;source=HwndSource.FromHwnd(handle);source.AddHook(Hook);notice=new(){Size=(uint)Marshal.SizeOf<Notice>(),Window=handle,Id=1,Flags=7,Callback=0x8000+710,Icon=MakeIcon()};if(!Shell_NotifyIcon(0,notice)){Dispose();throw new InvalidOperationException("Windows could not add Nashi to the system tray.");}recovery=new(()=>{notice.Flags=7;return Shell_NotifyIcon(0,notice);},ScheduleRestore,open);
+        this.open=open;this.menu=menu;var handle=new WindowInteropHelper(window).Handle;source=HwndSource.FromHwnd(handle);source.AddHook(Hook);notice=new(){Size=(uint)Marshal.SizeOf<Notice>(),Window=handle,Id=1,Flags=7,Callback=0x8000+710,Icon=MakeIcon()};if(!Shell_NotifyIcon(0,notice)){Dispose();throw new InvalidOperationException("Windows could not add Nara to the system tray.");}recovery=new(()=>{notice.Flags=7;return Shell_NotifyIcon(0,notice);},ScheduleRestore,open);
     }
     private static IntPtr MakeIcon()
     {
