@@ -41,21 +41,33 @@ public sealed partial class MainWindow:Window
     public MainWindow(string[]? initial=null,LibraryStore? library=null,bool checkForUpdates=true,bool offerToolSetup=true)
     {
         monitorToolSetup=checkForUpdates;
-        this.library=library??new LibraryStore();preferences=new(this.library.DirectoryPath);ApplyPreferences();Theme.Apply(this.library.Appearance);Theme.Attach(this);
-        Title="Nara";Width=820;Height=780;MinWidth=700;MinHeight=580;WindowStartupLocation=WindowStartupLocation.CenterScreen;AllowDrop=true;
+        this.library=library??new LibraryStore();preferences=new(this.library.DirectoryPath);ApplyPreferences();Theme.Apply("light");Theme.Attach(this);
+        Title="Nara";Width=1180;Height=800;MinWidth=940;MinHeight=640;WindowStartupLocation=WindowStartupLocation.CenterScreen;AllowDrop=true;
         Icon=NaraArtwork.Icon();
-        var root=new DockPanel{Margin=new(28,18,28,18)};Content=root;AddHandler(UIElement.PreviewMouseWheelEvent,new MouseWheelEventHandler(RoutePageMouseWheel),true);
-        var header=new DockPanel{Margin=new(0,0,0,18)};DockPanel.SetDock(header,Dock.Top);root.Children.Add(header);
+        var root=new DockPanel{Margin=new(0)};Content=root;AddHandler(UIElement.PreviewMouseWheelEvent,new MouseWheelEventHandler(RoutePageMouseWheel),true);
+        var sidebar=new Border{Width=190,Padding=new(18,22,14,18),BorderThickness=new(0,0,1,0)};
+        sidebar.SetResourceReference(Border.BackgroundProperty,"Surface");sidebar.SetResourceReference(Border.BorderBrushProperty,"Line");DockPanel.SetDock(sidebar,Dock.Left);root.Children.Add(sidebar);
+        var side=new DockPanel();sidebar.Child=side;
+        var sideBrand=new StackPanel{Orientation=Orientation.Horizontal,Margin=new(0,0,0,26)};
+        sideBrand.Children.Add(new Image{Source=NaraArtwork.Mark(),Width=42,Height=42,Margin=new(0,0,8,0)});
+        sideBrand.Children.Add(Text("Nara",22));DockPanel.SetDock(sideBrand,Dock.Top);side.Children.Add(sideBrand);
+        var sideNav=new StackPanel();side.Children.Add(sideNav);
+        var header=new DockPanel{Margin=new(28,18,28,18)};DockPanel.SetDock(header,Dock.Top);root.Children.Add(header);
         var controls=new WrapPanel{HorizontalAlignment=HorizontalAlignment.Right,VerticalAlignment=VerticalAlignment.Center};DockPanel.SetDock(controls,Dock.Right);header.Children.Add(controls);
-        homeButton=Button("Home",()=>ShowLibrary(false));libraryButton=Button("Library",()=>ShowLibrary(true));toolsSetupButton=Button(tools.Ready&&officeRuntime.Executable is not null?"Tools ready":"Finish setup",ShowToolSetupMenu);controls.Children.Add(toolsSetupButton);controls.Children.Add(homeButton);controls.Children.Add(libraryButton);
+        homeButton=Button("Ana Sayfa",()=>ShowLibrary(false));libraryButton=Button("Görüntüle",()=>ShowLibrary(true));
+        homeButton.Margin=new(0,3,0,3);libraryButton.Margin=new(0,3,0,3);homeButton.HorizontalContentAlignment=HorizontalAlignment.Left;libraryButton.HorizontalContentAlignment=HorizontalAlignment.Left;
+        homeButton.Padding=new(14,11,10,11);libraryButton.Padding=new(14,11,10,11);
+        sideNav.Children.Add(homeButton);sideNav.Children.Add(Button("Dönüştür",Choose));sideNav.Children.Add(Button("İndir",OpenDownload));sideNav.Children.Add(libraryButton);sideNav.Children.Add(Button("Araçlar",ShowShortcuts));
+        var sideBottom=new StackPanel();DockPanel.SetDock(sideBottom,Dock.Bottom);side.Children.Add(sideBottom);
+        sideBottom.Children.Add(Button("Ayarlar",ShowSettings));sideBottom.Children.Add(Button("Hakkında",ShowShortcuts));
+        toolsSetupButton=Button(tools.Ready&&officeRuntime.Executable is not null?"Kurulum tamam":"İlk kurulumu tamamla",ShowToolSetupMenu);controls.Children.Add(toolsSetupButton);
         appearance=new ComboBox{ItemsSource=new[]{"System","Light","Dark"},SelectedItem=char.ToUpper(this.library.Appearance[0])+this.library.Appearance[1..]};
         updateButton=Button("Check for updates",async()=>await CheckUpdatesAsync(true));
-        controls.Children.Add(Text("On your PC",11,"Muted"));controls.Children.Add(Button("Settings",ShowSettings));
-        var brand=new StackPanel{Orientation=Orientation.Horizontal};brand.Children.Add(new Image{Source=NaraArtwork.Mark(),Width=40,Height=40,Margin=new(0,0,10,0)});brand.Children.Add(Text("Nara",19));header.Children.Add(brand);foreach(var control in controls.Children.OfType<Button>()){control.Padding=new(10,6,10,6);control.FontSize=11;}
+        controls.Children.Add(Text("Bilgisayarınızda",11,"Muted"));foreach(var control in controls.Children.OfType<Button>()){control.Padding=new(10,6,10,6);control.FontSize=11;}
         DockPanel.SetDock(status,Dock.Bottom);status.Margin=new(4,14,4,0);root.Children.Add(status);
         var pages=new Grid();homeScroll.Content=home;homeScroll.VerticalScrollBarVisibility=ScrollBarVisibility.Auto;homeScroll.HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled;libraryScroll.Content=libraryPage;libraryScroll.VerticalScrollBarVisibility=ScrollBarVisibility.Auto;libraryScroll.HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled;pages.Children.Add(homeScroll);pages.Children.Add(libraryScroll);root.Children.Add(pages);
         var updateRow=new DockPanel();DockPanel.SetDock(updateButton,Dock.Right);updateRow.Children.Add(updateButton);var updateCaption=new StackPanel();updateCaption.Children.Add(Text("A little fresher. Ready when you are.",16));updateCaption.Children.Add(Text("You choose when to download and install.",12,"Muted"));updateRow.Children.Add(updateCaption);updateBanner=Card(updateRow);updateBanner.Visibility=Visibility.Collapsed;home.Children.Add(updateBanner);
-        home.Children.Add(homeTitle);var intro=Text("Convert, fine-tune, and send them on their way.",14,"Muted");intro.Margin=new(0,6,0,22);home.Children.Add(intro);
+        home.Children.Add(Text("Dosyalarınızla daha fazlasını yapın",30));var intro=Text("Dönüştürün, indirin, görüntüleyin. Hepsi tek bir uygulamada.",15,"Muted");intro.Margin=new(0,6,0,22);home.Children.Add(intro);
         home.Children.Add(workArea);
         var drop=new Grid();drop.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});drop.ColumnDefinitions.Add(new(){Width=new(166)});
         var dropText=new StackPanel();drop.Children.Add(dropText);dropText.Children.Add(selectionPill);selection.Margin=new(0,12,0,8);dropText.Children.Add(selection);dropText.Children.Add(fileDescription);
