@@ -9,12 +9,12 @@ namespace Nashi.Windows;
 internal static class Theme
 {
     internal static bool Dark{get;private set;}
-    internal static Brush Primary=>new LinearGradientBrush(Color.FromRgb(227,184,89),Color.FromRgb(245,209,125),0);
+    internal static Brush Primary=>new LinearGradientBrush(Color.FromRgb(124,58,237),Color.FromRgb(167,139,250),0);
     internal static Brush Brush(string name)=>(Brush)Application.Current.FindResource(name);
     internal static void Apply(string appearance)
     {
         Dark=appearance=="dark"||(appearance=="system"&&Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize","AppsUseLightTheme",1) is int value&&value==0);
-        foreach(var (key,light,dark) in new[]{("Paper","#F9F6ED","#111A14"),("Ink","#243B2B","#E7EBE6"),("Surface","#FFFEF7","#1C281F"),("Inset","#F1EDE0","#151F18"),("Muted","#596650","#A9B5A8"),("Line","#DCDDD1","#344237"),("Sage","#E0EBD2","#243928"),("Sand","#F6E7BE","#3C3421")})
+        foreach(var (key,light,dark) in new[]{("Paper","#FFFFFF","#111126"),("Ink","#17172F","#F4F1FF"),("Surface","#FFFFFF","#1D1B35"),("Inset","#F8F6FC","#15132A"),("Muted","#64648A","#B8B3D4"),("Line","#E5DFF5","#393451"),("Sage","#EDE9FE","#33245B"),("Sand","#EDE9FE","#30234F"),("Gold","#7C3AED","#A78BFA")})
             Application.Current.Resources[key]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(Dark?dark:light));
         foreach(Window window in Application.Current.Windows)ApplyTitleBar(window);
     }
