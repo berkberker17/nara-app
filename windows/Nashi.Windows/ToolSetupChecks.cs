@@ -31,7 +31,7 @@ internal static class ToolSetupChecks
             Capture(setup,Path.Combine(output,"windows-first-run-retry.png"));
             mode=1;PressContinue();check(setup.Working&&media==1,"Retry downloaded installed media again");DesktopInput.Key(setup,Key.Escape);WaitIdle();check(!setup.Status.Ready,"Cancelled setup was marked complete");
             mode=2;PressContinue();WaitIdle();check(setup.Status.Ready&&media==1&&office==3,"Retry did not finish only the missing tools");
-            L10n.Language="tr";DesktopInput.Pump();check(setup.ContinueButton.Content as string=="Nashi’ye devam et","Setup footer did not update to Turkish");Capture(setup,Path.Combine(output,"windows-first-run-tools-turkish.png"));
+            L10n.Language="tr";DesktopInput.Pump();check(setup.ContinueButton.Content as string=="Nara’ya devam et","Setup footer did not update to Turkish");Capture(setup,Path.Combine(output,"windows-first-run-tools-turkish.png"));
             PressContinue();check(!setup.IsVisible&&media==1,"Continue did not finish setup without redownloading tools");
         }
         finally{setup.Close();L10n.Language=language;}
