@@ -1,7 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 namespace Nashi.Windows;
 
@@ -16,8 +15,7 @@ internal sealed class FileGarden:Grid
         AddCard("PDF",-16,-34,12,"Muted");AddCard("PNG",7,31,-2,"Gold");
         mark=new Image{Width=65,Height=65,RenderTransform=new TranslateTransform(0,42)};Children.Add(mark);SetSelected(false);
     }
-    internal void SetSelected(bool selected)=>mark.Source=Artwork(selected?"NashiMarkHappy":"NashiMark");
-    internal static BitmapImage Artwork(string name)=>new(new Uri("pack://application:,,,/Assets/"+name+".png"));
+    internal void SetSelected(bool selected)=>mark.Source=NaraArtwork.Mark();
     private void AddCard(string label,double angle,double x,double y,string color)
     {
         var content=new StackPanel();
