@@ -7,7 +7,7 @@ namespace Nashi.Windows;
 internal static class NaraArtwork
 {
     // A soft, continuous ribbon-N mark drawn in vector form so it stays crisp
-    // at every size and does not depend on the legacy Nashi bitmap assets.
+    // at every size and is drawn in vector form and remains crisp at every size.
     internal static ImageSource Mark()
     {
         var geometry = Geometry.Parse("M 5,30 C 5,17 15,8 27,8 C 37,8 44,17 51,27 L 59,38 C 64,45 70,49 77,49 C 88,49 95,40 95,29 C 95,21 91,15 84,12 C 91,18 88,26 82,31 C 76,36 69,35 63,28 L 51,12 C 44,4 36,1 27,3 C 12,5 3,17 3,30 C 3,42 9,51 20,55 C 13,50 12,41 16,34 C 20,27 28,25 34,31 L 47,47 C 55,57 64,63 76,61 C 89,59 98,47 98,34 C 98,26 94,18 87,14 C 90,19 90,27 85,32 C 80,37 73,37 67,30 L 55,14 C 47,4 38,0 27,3 C 14,6 5,17 5,30 Z");
