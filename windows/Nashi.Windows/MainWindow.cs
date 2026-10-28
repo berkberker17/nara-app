@@ -76,9 +76,9 @@ public sealed partial class MainWindow:Window
         var pages=new Grid{Margin=new(28,0,28,18)};homeScroll.Content=home;homeScroll.VerticalScrollBarVisibility=ScrollBarVisibility.Auto;homeScroll.HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled;libraryScroll.Content=libraryPage;libraryScroll.VerticalScrollBarVisibility=ScrollBarVisibility.Auto;libraryScroll.HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled;pages.Children.Add(homeScroll);pages.Children.Add(libraryScroll);root.Children.Add(pages);
         var updateRow=new DockPanel();DockPanel.SetDock(updateButton,Dock.Right);updateRow.Children.Add(updateButton);var updateCaption=new StackPanel();updateCaption.Children.Add(Text("Nara her zaman güncel.",16));updateCaption.Children.Add(Text("İndirme ve kurulum zamanını siz seçin.",12,"Muted"));updateRow.Children.Add(updateCaption);updateBanner=Card(updateRow);updateBanner.Visibility=Visibility.Collapsed;home.Children.Add(updateBanner);
         var headline=new TextBlock{FontSize=30,FontWeight=FontWeights.Bold,TextWrapping=TextWrapping.Wrap,MaxWidth=560,Foreground=Theme.Brush("Ink")};
-        headline.Inlines.Add(new System.Windows.Documents.Run("Dosyalarınızla\\ndaha "));
+        headline.Inlines.Add(new System.Windows.Documents.Run("Dosyalarınızla\ndaha "));
         headline.Inlines.Add(new System.Windows.Documents.Run("fazlasını yapın"){Foreground=Theme.Primary});
-        home.Children.Add(headline);var intro=Text("Dönüştürün, indirin, görüntüleyin.\\nHepsi tek bir uygulamada.",15,"Muted");intro.Margin=new(0,6,0,22);home.Children.Add(intro);
+        home.Children.Add(headline);var intro=Text("Dönüştürün, indirin, görüntüleyin.\nHepsi tek bir uygulamada.",15,"Muted");intro.Margin=new(0,6,0,22);home.Children.Add(intro);
         home.Children.Add(workArea);
         // Keep file-selection controls wired for the existing import workflow,
         // but keep the landing page faithful to the Nara reference: hero + four action cards.
