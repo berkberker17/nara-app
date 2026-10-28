@@ -58,14 +58,27 @@ public sealed class ToolSetupWindow : Window
     }
     private void Group(string title, string detail, bool ready, ToolGroup group)
     {
-        var row = new StackPanel { Margin = new(14) }; row.Children.Add(Label(title, 18)); row.Children.Add(Label(detail));
+        var row = new StackPanel { Margin = new(14) };
+        var heading = new DockPanel { Margin = new(0, 0, 0, 8) };
+        var icon = Label(group == ToolGroup.Media ? "▣" : "▤", 27);
+        icon.Width = 54; icon.Height = 54; icon.TextAlignment = TextAlignment.Center;
+        icon.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(237, 233, 254));
+        icon.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(124, 58, 237));
+        DockPanel.SetDock(icon, Dock.Left); heading.Children.Add(icon);
+        var copy = new StackPanel { Margin = new(14, 0, 0, 0) };
+        copy.Children.Add(Label(title, 18)); copy.Children.Add(Label(detail));
+        heading.Children.Add(copy); row.Children.Add(heading);
         if (ready) row.Children.Add(Label("Bilgisayarınızda zaten mevcut"));
         else
         {
-            var download = MainWindow.Button(group == ToolGroup.Media ? "Medya araçlarını indir" : "Ofis araçlarını indir", async () => await StartSetupAsync(group));
+            var download = group == ToolGroup.Media
+                ? MainWindow.Primary("↓   Medya araçlarını indir", async () => await StartSetupAsync(group))
+                : MainWindow.Button("↓   Ofis araçlarını indir", async () => await StartSetupAsync(group));
+            download.HorizontalAlignment = HorizontalAlignment.Stretch; download.Margin = new(0, 8, 0, 0);
+            if (group == ToolGroup.Office) { download.Background = Theme.Brush("Surface"); download.Foreground = Theme.Brush("Gold"); download.BorderBrush = Theme.Brush("Gold"); }
             download.IsEnabled = !Working; AutomationProperties.SetAutomationId(download, group == ToolGroup.Media ? "SetupMedia" : "SetupOffice"); row.Children.Add(download);
         }
-        var card = new Border { Child = row, CornerRadius = new(16), BorderThickness = new(1), Margin = new(0, 12, 0, 8) };
+        var card = new Border { Child = row, CornerRadius = new(18), Padding = new(2), BorderThickness = new(1), Margin = new(0, 8, 0, 8) };
         card.SetResourceReference(Border.BackgroundProperty, "Surface"); card.SetResourceReference(Border.BorderBrushProperty, "Line"); groups.Children.Add(card);
     }
     internal async Task StartSetupAsync(ToolGroup? selected = null)
