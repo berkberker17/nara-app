@@ -59,7 +59,8 @@ public sealed partial class MainWindow:Window
         homeButton.Width=150;libraryButton.Width=150;
         homeButton.Padding=new(14,11,10,11);libraryButton.Padding=new(14,11,10,11);
         sideNav.Children.Add(homeButton);
-        Button Nav(string glyph,string label,Action action){var b=Button(glyph+"   "+label,action);b.FontFamily=new FontFamily("Segoe MDL2 Assets");return b;}
+        UIElement NavContent(string glyph,string label){var row=new StackPanel{Orientation=Orientation.Horizontal,VerticalAlignment=VerticalAlignment.Center};var icon=Text(glyph,16,"Ink",false);icon.FontFamily=new FontFamily("Segoe MDL2 Assets");icon.Width=20;icon.Margin=new(0,0,12,0);row.Children.Add(icon);row.Children.Add(Text(label,13));return row;}
+        Button Nav(string glyph,string label,Action action){var b=Button("",action);b.Content=NavContent(glyph,label);return b;}
         var convertNav=Nav("\\uE72C","Dönüştür",Choose);var downloadNav=Nav("\\uE896","İndir",OpenDownload);var viewNav=Nav("\\uE8B7","Görüntüle",()=>ShowLibrary(true));var toolsNav=Nav("\\uE80A","Araçlar",ShowWheel);
         foreach(var nav in new[]{convertNav,downloadNav,viewNav,toolsNav}){nav.Width=150;nav.HorizontalAlignment=HorizontalAlignment.Stretch;nav.HorizontalContentAlignment=HorizontalAlignment.Left;nav.Padding=new(14,11,10,11);nav.Margin=new(0,3,0,3);}
         sideNav.Children.Add(convertNav);sideNav.Children.Add(downloadNav);sideNav.Children.Add(viewNav);sideNav.Children.Add(toolsNav);
