@@ -16,14 +16,14 @@ public sealed partial class MainWindow:Window
     private readonly ListBox list=new(){MinHeight=0,MaxHeight=110};
     private readonly Grid actions=new();
     private readonly TextBlock selection=new(){FontSize=23,FontWeight=FontWeights.Bold,TextWrapping=TextWrapping.Wrap};
-    private readonly TextBlock status=Text("Files stay on your computer.",12,"Muted");
+    private readonly TextBlock status=Text("Dosyalarınız bilgisayarınızda kalır.",12,"Muted");
     private readonly TextBox link=new(){ToolTip="Paste a public video, image or audio page link"};
     private readonly ComboBox downloadKind=new(){ItemsSource=new[]{"video","audio","thumbnail"},SelectedIndex=0,MinWidth=110};
     private readonly Toolchain tools=new(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Nara","Tools","v1"));
     private readonly LibraryStore library;
     private readonly PreferencesStore preferences;private GlobalDragController? globalDrag;
     private readonly StackPanel home=new(),libraryPage=new(),libraryRows=new(),recentRows=new();
-    private readonly TextBox recentSearch=new(){ToolTip="Find a recent file",Width=165};private readonly TextBlock recentCount=Text("0",11,"Muted");private Button? chooseFilesButton,openWheelButton;private readonly TextBlock fileDescription=Text("Images, videos, documents, and all the little things in between.",12,"Muted");
+    private readonly TextBox recentSearch=new(){ToolTip="Son dosyalarda ara",Width=165};private readonly TextBlock recentCount=Text("0",11,"Muted");private Button? chooseFilesButton,openWheelButton;private readonly TextBlock fileDescription=Text("Görseller, videolar, belgeler ve daha fazlası.",12,"Muted");
     private readonly TextBox search=new(){ToolTip="Find a file or tool in Library",MinWidth=200};
     private readonly DockPanel manage=new();private readonly FileGarden garden=new();private readonly StackPanel webContent=new();private Window? webWindow;
     internal Window DownloadWindow=>webWindow??this;
@@ -68,19 +68,19 @@ public sealed partial class MainWindow:Window
         sideBottom.Children.Add(settingsNav);sideBottom.Children.Add(aboutNav);
         toolsSetupButton=Button(tools.Ready&&officeRuntime.Executable is not null?"Kurulum tamam":"İlk kurulumu tamamla",ShowToolSetupMenu);controls.Children.Add(toolsSetupButton);
         appearance=new ComboBox{ItemsSource=new[]{"System","Light","Dark"},SelectedItem=char.ToUpper(this.library.Appearance[0])+this.library.Appearance[1..]};
-        updateButton=Button("Check for updates",async()=>await CheckUpdatesAsync(true));
+        updateButton=Button("Güncellemeleri denetle",async()=>await CheckUpdatesAsync(true));
         controls.Children.Add(Text("Bilgisayarınızda",11,"Muted"));foreach(var control in controls.Children.OfType<Button>()){control.Padding=new(10,6,10,6);control.FontSize=11;}
         DockPanel.SetDock(status,Dock.Bottom);status.Margin=new(4,14,4,0);root.Children.Add(status);
         var pages=new Grid{Margin=new(28,0,28,18)};homeScroll.Content=home;homeScroll.VerticalScrollBarVisibility=ScrollBarVisibility.Auto;homeScroll.HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled;libraryScroll.Content=libraryPage;libraryScroll.VerticalScrollBarVisibility=ScrollBarVisibility.Auto;libraryScroll.HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled;pages.Children.Add(homeScroll);pages.Children.Add(libraryScroll);root.Children.Add(pages);
-        var updateRow=new DockPanel();DockPanel.SetDock(updateButton,Dock.Right);updateRow.Children.Add(updateButton);var updateCaption=new StackPanel();updateCaption.Children.Add(Text("A little fresher. Ready when you are.",16));updateCaption.Children.Add(Text("You choose when to download and install.",12,"Muted"));updateRow.Children.Add(updateCaption);updateBanner=Card(updateRow);updateBanner.Visibility=Visibility.Collapsed;home.Children.Add(updateBanner);
+        var updateRow=new DockPanel();DockPanel.SetDock(updateButton,Dock.Right);updateRow.Children.Add(updateButton);var updateCaption=new StackPanel();updateCaption.Children.Add(Text("Nara her zaman güncel.",16));updateCaption.Children.Add(Text("İndirme ve kurulum zamanını siz seçin.",12,"Muted"));updateRow.Children.Add(updateCaption);updateBanner=Card(updateRow);updateBanner.Visibility=Visibility.Collapsed;home.Children.Add(updateBanner);
         var headline=Text("Dosyalarınızla daha fazlasını yapın",30);headline.MaxWidth=540;home.Children.Add(headline);var intro=Text("Dönüştürün, indirin, görüntüleyin. Hepsi tek bir uygulamada.",15,"Muted");intro.Margin=new(0,6,0,22);home.Children.Add(intro);
         home.Children.Add(workArea);
         var drop=new Grid();drop.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});drop.ColumnDefinitions.Add(new(){Width=new(166)});
         var dropText=new StackPanel();drop.Children.Add(dropText);dropText.Children.Add(selectionPill);selection.Margin=new(0,12,0,8);dropText.Children.Add(selection);dropText.Children.Add(fileDescription);
-        var picks=new WrapPanel{Margin=new(0,14,0,8)};chooseFilesButton=Primary("Choose files",Choose);picks.Children.Add(chooseFilesButton);openWheelButton=Primary("Open wheel",ShowWheel);picks.Children.Add(Button("Yapıştır",PasteClipboard));picks.Children.Add(openWheelButton);dropText.Children.Add(picks);
+        var picks=new WrapPanel{Margin=new(0,14,0,8)};chooseFilesButton=Primary("Dosya seç",Choose);picks.Children.Add(chooseFilesButton);openWheelButton=Primary("Araçları aç",ShowWheel);picks.Children.Add(Button("Yapıştır",PasteClipboard));picks.Children.Add(openWheelButton);dropText.Children.Add(picks);
         Grid.SetColumn(garden,1);drop.Children.Add(garden);
         var dropStack=new StackPanel();dropStack.Children.Add(drop);list.ItemsSource=files;list.SelectionMode=SelectionMode.Extended;
-        BuildFileChips();var clear=Button("Clear",()=>{files.Clear();Refresh();});DockPanel.SetDock(clear,Dock.Right);manage.Children.Add(clear);manage.Children.Add(list);dropStack.Children.Add(manage);
+        BuildFileChips();var clear=Button("Temizle",()=>{files.Clear();Refresh();});DockPanel.SetDock(clear,Dock.Right);manage.Children.Add(clear);manage.Children.Add(list);dropStack.Children.Add(manage);
         shortcutHints.Orientation=Orientation.Horizontal;shortcutHints.Margin=new(0,12,0,0);dropStack.Children.Add(shortcutHints);
         var featureGrid=new Grid{Margin=new(0,8,0,0)};featureGrid.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});featureGrid.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});featureGrid.RowDefinitions.Add(new(){Height=GridLength.Auto});featureGrid.RowDefinitions.Add(new(){Height=GridLength.Auto});
         Border Feature(string symbol,string title,string description,Action action,int col,int row){var body=new StackPanel{Orientation=Orientation.Horizontal};var glyph=Text(symbol,28,"Gold",false);glyph.Width=54;glyph.Height=54;glyph.TextAlignment=TextAlignment.Center;glyph.Margin=new(0,0,14,0);glyph.Background=new SolidColorBrush(Color.FromRgb(237,233,254));body.Children.Add(glyph);var copy=new StackPanel{VerticalAlignment=VerticalAlignment.Center};copy.Children.Add(Text(title,16));copy.Children.Add(Text(description,12,"Muted"));body.Children.Add(copy);var button=Button("",action);button.Content=body;button.HorizontalContentAlignment=HorizontalAlignment.Stretch;button.BorderThickness=new(0);button.Background=Brushes.Transparent;var card=Card(button);card.Margin=new(0,0,10,10);Grid.SetColumn(card,col);Grid.SetRow(card,row);return card;}
@@ -88,13 +88,13 @@ public sealed partial class MainWindow:Window
         workArea.Children.Add(featureGrid);
         actions.Margin=new(0,10,0,0);
         var web=new StackPanel();web.Children.Add(Text("Bağlantıdan indir",17));web.Children.Add(Text("Video, ses veya görseli doğrudan araçlarınıza indirin.",12,"Muted"));
-        var download=new DockPanel{Margin=new(0,12,0,0)};var save=Primary("Download ↗",async()=>await DownloadAsync());DockPanel.SetDock(save,Dock.Right);download.Children.Add(save);DockPanel.SetDock(downloadKind,Dock.Right);download.Children.Add(downloadKind);download.Children.Add(link);web.Children.Add(download);
-        web.Children.Add(Text("Ctrl+Shift+D  Use a copied link  ·  Public, downloadable media",11,"Muted"));webContent.Margin=new(24);webContent.Children.Add(Text("Download from the web",27));webContent.Children.Add(Text("A link. A file. Yours to work with.",14,"Muted"));var webCard=Card(web);webCard.Margin=new(0,20,0,0);webContent.Children.Add(webCard);BuildWebOptions();
+        var download=new DockPanel{Margin=new(0,12,0,0)};var save=Primary("İndir ↗",async()=>await DownloadAsync());DockPanel.SetDock(save,Dock.Right);download.Children.Add(save);DockPanel.SetDock(downloadKind,Dock.Right);download.Children.Add(downloadKind);download.Children.Add(link);web.Children.Add(download);
+        web.Children.Add(Text("Ctrl+Shift+D  Kopyalanan bağlantıyı kullan",11,"Muted"));webContent.Margin=new(24);webContent.Children.Add(Text("Web’den indir",27));webContent.Children.Add(Text("Bir bağlantıdan dosyanıza.",14,"Muted"));var webCard=Card(web);webCard.Margin=new(0,20,0,0);webContent.Children.Add(webCard);BuildWebOptions();
         var webHeader=new DockPanel();var shortcut=Text("Ctrl+Shift+D",12,"Muted");DockPanel.SetDock(shortcut,Dock.Right);webHeader.Children.Add(shortcut);var arrow=Text("↓",28,"Gold");arrow.Margin=new(0,0,14,0);DockPanel.SetDock(arrow,Dock.Left);webHeader.Children.Add(arrow);var caption=new StackPanel();caption.SetValue(TextBlock.TextAlignmentProperty,TextAlignment.Left);caption.Children.Add(Text("Bağlantıdan indir",15));caption.Children.Add(Text("Video, ses veya görseli doğrudan araçlarınıza indirin.",12,"Muted"));webHeader.Children.Add(caption);var webButton=Button("",OpenDownload);webButton.Content=webHeader;webButton.HorizontalContentAlignment=HorizontalAlignment.Stretch;webButton.Margin=new(0);webButton.Padding=new(18);webButton.BorderThickness=new(0);var webLanding=Card(webButton);webLanding.Padding=new(0);workArea.Children.Add(webLanding);workArea.Children.Add(actions);
         var recentHeading=new DockPanel{Margin=new(0,24,0,10)};var all=Button("Tümünü gör  ↗",()=>ShowLibrary(true));DockPanel.SetDock(all,Dock.Right);recentHeading.Children.Add(all);recentSearch.TextChanged+=(_,_)=>RenderLibrary();DockPanel.SetDock(recentSearch,Dock.Right);recentHeading.Children.Add(recentSearch);var recentTitle=new StackPanel{Orientation=Orientation.Horizontal,VerticalAlignment=VerticalAlignment.Center};recentTitle.Children.Add(Text("Son oluşturulanlar",19));recentCount.Margin=new(10,0,0,0);recentTitle.Children.Add(recentCount);recentHeading.Children.Add(recentTitle);home.Children.Add(recentHeading);var recentCard=Card(recentRows);recentCard.Padding=new(7);home.Children.Add(recentCard);
         var footer=new WrapPanel{Margin=new(0,14,0,0)};footer.Children.Add(Button("Set up media tools",async()=>await SetupAsync()));footer.Children.Add(Button("Set up office tools",async()=>await SetupOfficeAsync()));footer.Children.Add(Button("Features & shortcuts",ShowShortcuts));footer.Children.Add(dropStack);home.Children.Add(new Expander{Header="Dosya alanı ve araçlar",Content=footer,Margin=new(4,8,4,0)});
-        libraryPage.Children.Add(Text("Your Library",30));libraryPage.Children.Add(Text("Freshly made, pasted, and ready for another round.",14,"Muted"));
-        var searchLabel=Text("Find a file or tool  ·  Ctrl+F",12,"Muted");searchLabel.Margin=new(4,20,4,0);libraryPage.Children.Add(searchLabel);libraryPage.Children.Add(search);libraryPage.Children.Add(libraryRows);search.TextChanged+=(_,_)=>RenderLibrary();
+        libraryPage.Children.Add(Text("Kitaplığınız",30));libraryPage.Children.Add(Text("Oluşturduğunuz ve içe aktardığınız dosyalar.",14,"Muted"));
+        var searchLabel=Text("Dosya veya araç ara  ·  Ctrl+F",12,"Muted");searchLabel.Margin=new(4,20,4,0);libraryPage.Children.Add(searchLabel);libraryPage.Children.Add(search);libraryPage.Children.Add(libraryRows);search.TextChanged+=(_,_)=>RenderLibrary();
         AutomationProperties.SetAutomationId(search,"LibrarySearch");AutomationProperties.SetAutomationId(link,"DownloadLink");AutomationProperties.SetAutomationId(list,"SelectedFiles");
         Closing+=(_,e)=>{if(busy){e.Cancel=true;L10n.SetText(status,"Finish the current operation or choose Cancel before closing Nara.");}};
         DragOver+=(_,e)=>{e.Effects=!busy&&(e.Data.GetDataPresent(DataFormats.FileDrop)||e.Data.GetDataPresent(DataFormats.UnicodeText)||e.Data.GetDataPresent(DataFormats.Html)||e.Data.GetDataPresent("UniformResourceLocatorW"))?DragDropEffects.Copy:DragDropEffects.None;e.Handled=true;};
@@ -247,11 +247,11 @@ public sealed partial class MainWindow:Window
             if(imageSelection)preview=ImageEngine.Load(input);
             else if(mediaSelection)
             {
-                if(!tools.Ready){MessageBox.Show(this,L10n.Text("Choose Set up media tools once to enable media editing."),L10n.Text("Media setup"));return;}
+                if(!tools.Ready){MessageBox.Show(this,L10n.Text("Medya düzenleme özelliklerini etkinleştirmek için medya araçlarını kurun."),L10n.Text("Medya kurulumu"));return;}
                 var engine=new MediaEngine(tools.Executable("ffmpeg"),tools.Executable("ffprobe"));info=await engine.InspectAsync(input);
                 if(choice.Id is "cropVideo" or "redactVideo")
                 {
-                    temporary=Path.Combine(Path.GetTempPath(),"Nashi-preview-"+Guid.NewGuid().ToString("N")+".png");
+                    temporary=Path.Combine(Path.GetTempPath(),"Nara-preview-"+Guid.NewGuid().ToString("N")+".png");
                     await ProcessRunner.RunAsync(tools.Executable("ffmpeg"),["-v","error","-i",input,"-frames:v","1",temporary]);preview=ImageEngine.Load(temporary);
                 }
             }
@@ -293,7 +293,7 @@ public sealed partial class MainWindow:Window
     {
         if(busy)return;
         var payload=WebMediaPayload.Parse(link.Text);var kind=downloadKind.SelectedItem as string??"video";
-        if(!tools.Ready&&kind!="image"&&payload?.Kind!="image"&&!(kind=="thumbnail"&&payload?.Kind=="youtube")){MessageBox.Show(webWindow??this,L10n.Text("Choose Set up media tools once to enable web downloads."),L10n.Text("Media setup"));return;}
+        if(!tools.Ready&&kind!="image"&&payload?.Kind!="image"&&!(kind=="thumbnail"&&payload?.Kind=="youtube")){MessageBox.Show(webWindow??this,L10n.Text("Web indirmelerini etkinleştirmek için medya araçlarını kurun."),L10n.Text("Media setup"));return;}
         if(kind=="photos"&&inspectedLink!=link.Text){await InspectWebLinkAsync();return;}
         try{var url=WebDownload.Validate(payload?.Url??link.Text).AbsoluteUri;await RunAsync((destination,p,t)=>new WebDownload(tools).DownloadAsync(url,kind,destination,p,t,webQuality.SelectedIndex==1?1080:webQuality.SelectedIndex==2?720:null,kind=="photos"?new HashSet<int>(selectedWebPhotos):null),"Download "+kind);}catch(Exception error){MessageBox.Show(webWindow??this,L10n.Text(error.Message),L10n.Text("Check your link"));}
     }
