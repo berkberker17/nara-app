@@ -26,8 +26,8 @@ public sealed class ToolSetupWindow : Window
         Func<ToolGroup, IProgress<OperationProgress>, CancellationToken, Task> install, Action<bool>? workingChanged = null)
     {
         this.probe = probe; this.install = install; this.workingChanged = workingChanged ?? (_ => { });
-        Owner = owner; Theme.Attach(this); Title = "Set up Nashi tools"; Width = 646; Height = 690; MinWidth = 590; MinHeight = 560; WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        L10n.Bind(this,TitleProperty,"Set up Nashi tools");
+        Owner = owner; Theme.Attach(this); Title = "Set up Nara tools"; Width = 646; Height = 690; MinWidth = 590; MinHeight = 560; WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        L10n.Bind(this,TitleProperty,"Set up Nara tools");
         var root = new DockPanel(); Content = root;
         var footer = new StackPanel { Margin = new(24) }; DockPanel.SetDock(footer, Dock.Bottom); root.Children.Add(footer);
         footer.Children.Add(status); footer.Children.Add(progress);
@@ -50,7 +50,7 @@ public sealed class ToolSetupWindow : Window
         var ready = Status; groups.Children.Clear();
         Group("Media tools", "FFmpeg, ffprobe, yt-dlp and Deno enable media conversion, previews and web downloads. Approximately 180 MB. FFmpeg and yt-dlp use GPL licenses; Deno uses MIT.", ready.MediaReady, ToolGroup.Media);
         Group("Office tools", "LibreOffice 26.8.1 enables Office document conversions. Approximately 360 MB to download. MPL 2.0 and its included third-party licenses.", ready.OfficeReady, ToolGroup.Office);
-        L10n.Bind(next, ContentControl.ContentProperty, ready.Ready ? "Continue to Nashi" : "Download missing tools"); next.IsEnabled = !Working;
+        L10n.Bind(next, ContentControl.ContentProperty, ready.Ready ? "Continue to Nara" : "Download missing tools"); next.IsEnabled = !Working;
         cancel.Visibility = Working ? Visibility.Visible : Visibility.Collapsed; progress.Visibility = Working ? Visibility.Visible : Visibility.Collapsed;
         if (ready.Ready && !Working) L10n.SetText(status, "Ready. You can go back to your files.");
         else if(previouslyReady&&!Working)L10n.SetText(status,"Download the missing tools to enable all conversions, previews and web downloads. Tools already found on your computer are kept.");
