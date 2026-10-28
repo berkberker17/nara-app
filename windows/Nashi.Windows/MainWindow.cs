@@ -47,7 +47,7 @@ public sealed partial class MainWindow:Window
         var root=new DockPanel{Margin=new(0)};Content=root;AddHandler(UIElement.PreviewMouseWheelEvent,new MouseWheelEventHandler(RoutePageMouseWheel),true);
         var sidebar=new Border{Width=190,Padding=new(18,22,14,18),BorderThickness=new(0,0,1,0)};
         sidebar.SetResourceReference(Border.BackgroundProperty,"Surface");sidebar.SetResourceReference(Border.BorderBrushProperty,"Line");DockPanel.SetDock(sidebar,Dock.Left);root.Children.Add(sidebar);
-        var side=new DockPanel();DockPanel.SetLastChildFill(side,false);sidebar.Child=side;
+        var side=new DockPanel{LastChildFill=false};sidebar.Child=side;
         var sideBrand=new StackPanel{Orientation=Orientation.Horizontal,Margin=new(0,0,0,26)};
         sideBrand.Children.Add(new Image{Source=NaraArtwork.Mark(),Width=42,Height=42,Margin=new(0,0,8,0)});
         sideBrand.Children.Add(Text("Nara",22));DockPanel.SetDock(sideBrand,Dock.Top);side.Children.Add(sideBrand);
